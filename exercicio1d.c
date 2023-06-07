@@ -101,7 +101,7 @@ int main(int argc, char const *argv[])
     // realizar consultas na tabela de indices 
     inicia_tempo();
     for (int i = 0; i < N; i++) {
-        for(int j = 0; j < tabela.n_de_indices_na_tabela;j++){
+        for(int j = 0; j < tabela.n_de_indices_na_tabela-1;j++){
             if(consultas[i] < tabela.secao[j+1] && consultas[i] >= tabela.secao[j]){ // verifica se consultas[i] está entre 0 e 10000, 10000 e 20000 ... 40000 e 50000
                 for(int k = tabela.secao[j]; k < tabela.secao[j+1];k++){ //percorre todo o setor de tamanho 10000 verificando se o item está contido no conjunto
                     if(consultas[i] == entradas[k]){                        // não está funcionando
