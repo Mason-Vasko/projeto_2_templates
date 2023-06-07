@@ -8,15 +8,15 @@
 // Criação da Struct Tabela_de_indices
 
 typedef struct{
-    int secao[TAMANHO];
+    int secao[TAMANHO+1];
     int n_de_indices_na_tabela;
 }Tabela_de_indices;
 
 /* Como o número de elementos da entrada é estático, a tabela será construída com tamanho e índices fixos */
 
 void cria_tabela_de_indices(Tabela_de_indices* tabela){
-    tabela->n_de_indices_na_tabela = 5;
-    for(int i = 0; i < TAMANHO; i++){
+    tabela->n_de_indices_na_tabela = TAMANHO + 1;
+    for(int i = 0; i <= TAMANHO; i++){
         tabela->secao[i] = i*10000;
     }
 }
