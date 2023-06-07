@@ -2,6 +2,25 @@
 #include <stdlib.h>
 #include <time.h>
 
+// Definição do Tamanho da Tabela de índices
+#define TAMANHO 5
+
+// Criação da Struct Tabela_de_indices
+
+typedef struct{
+    int secao[TAMANHO];
+    int n_de_indices_na_tabela;
+}Tabela_de_indices;
+
+/* Como o número de elementos da entrada é estático, a tabela será construída com tamanho e índices fixos */
+
+void cria_tabela_de_indices(Tabela_de_indices* tabela){
+    tabela->n_de_indices_na_tabela = 5;
+    for(int i = 0; i < TAMANHO; i++){
+        tabela->secao[i] = i*10000;
+    }
+}
+
 // Definição das variaveis que controlam a medição de tempo
 clock_t _ini, _fim;
 
@@ -73,6 +92,8 @@ int main(int argc, char const *argv[])
     int* entradas = ler_inteiros("inteiros_entrada.txt", N);
     int* consultas = ler_inteiros("inteiros_busca.txt", N);
     
+    Tabela_de_indices tabela;
+    cria_tabela_de_indices(&tabela);
     // ordenar entrada
     QuickSort(entradas,0,N-1);
     // criar tabela de indice
@@ -80,7 +101,15 @@ int main(int argc, char const *argv[])
     // realizar consultas na tabela de indices 
     inicia_tempo();
     for (int i = 0; i < N; i++) {
-        printf("%d\n",entradas[i]);
+        for(int j = 0; j < tabela.n_de_indices_na_tabela;j++){
+            if(consultas[i] < tabela.secao[j+1] && consultas[i] >= tabela.secao[j]){ // verifica se consultas[i] está entre 0 e 10000, 10000 e 20000 ... 40000 e 50000
+                for(int k = tabela.secao[j]; k < tabela.secao[j+1];k++){ //percorre todo o setor de tamanho 10000 verificando se o item está contido no conjunto
+                    if(consultas[i] == entradas[k]){                        // não está funcionando
+                        encontrados++;
+                    }
+                }
+            }
+        }
         // buscar o elemento consultas[i] na entrada
     }
     double tempo_busca = finaliza_tempo();
