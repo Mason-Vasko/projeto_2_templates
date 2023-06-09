@@ -18,6 +18,16 @@ typedef char * string;
 
 #define MAX_STRING_LEN 20
 
+// definicoes da hashtable limitada
+typedef struct {
+    int chave;
+    int valor;
+} Par;
+
+typedef struct {
+    int tamanho;
+    Par **tabela;
+} tabelaHashLim;
 
 unsigned converter(string s) {
    unsigned h = 0;
@@ -66,6 +76,66 @@ unsigned h_mul(unsigned x, unsigned i, unsigned B)
     return  ((int) ((fmod(x * A, 1) * B) + i)) % B;
 }
 
+// definindo funcao hash e rehash
+unsigned hash(tabelaHashLim* tabelaHash, int chave, unsigned i) {
+    const int B = 150001;
+    int h_mul_val = h_mul(chave, i, B);
+    int h_div_val = h_div(chave, i, B);
+
+    return (h_mul_val + i * h_div_val) % tabelaHash->tamanho;
+}
+
+unsigned rehash(tabelaHashLim* tabelaHash, int chave, unsigned i) {
+    return (hash(tabelaHash, chave, i) + i) % tabelaHash->tamanho;
+}
+
+// funcoes da tabela
+tabelaHashLim* criaTabela(int tamanho) {
+    tabelaHashLim* tabelaHash = (tabelaHashLim*)malloc(sizeof(tabelaHashLim));
+    tabelaHash->tamanho = tamanho;
+    tabelaHash->tabela = (Par**)calloc(tamanho, sizeof(Par*));
+
+    return tabelaHash;
+}
+void insere(tabelaHashLim* tabelaHash, int chave, int valor) {
+    int i = 0;
+    int valorHash = hash(tabelaHash, chave, i);
+
+    while (tabelaHash->tabela[valorHash] != NULL)
+        valorHash = rehash(tabelaHash, chave, i++);
+    
+    Par* par = (Par*)malloc(sizeof(Par));
+    par->chave = chave;
+    par->valor = valor;
+    tabelaHash->tabela[valorHash] = par;
+}
+
+int busca(tabelaHashLim* tabelaHash, int chave) {
+    int i = 0;
+    int valorHash = hash(tabelaHash, chave, i);
+
+    while (tabelaHash->tabela[valorHash] != NULL) {
+        if (tabelaHash->tabela[valorHash]->chave == chave)
+            return tabelaHash->tabela[valorHash]->valor;
+        
+        valorHash = rehash(tabelaHash, chave, i++);
+    }
+
+    return -1;
+}
+
+void excluiTabHash(tabelaHashLim* tabelaHash) {
+    if (tabelaHash == NULL) 
+        return;
+    
+    for (int i = 0; i < tabelaHash->tamanho; i++) 
+        if (tabelaHash->tabela[i] != NULL)
+            free(tabelaHash->tabela[i]);
+    
+    free(tabelaHash->tabela);
+    free(tabelaHash);
+}
+
 int main(int argc, char const *argv[])
 {
     const int N = 50000;
@@ -80,21 +150,26 @@ int main(int argc, char const *argv[])
 
 
     // cria tabela hash com hash por hash duplo
+    tabelaHashLim* tabelaHash = criaTabela(B);
 
     // inserção dos dados na tabela hash
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
+        insere(tabelaHash, converter(insercoes[i]), i);
     }
     double tempo_insercao = finaliza_tempo();
 
+    int resultadoBusca;
     // busca dos dados na tabela hash
     inicia_tempo();
     for (int i = 0; i < M; i++) {
         // buscar consultas[i] na tabela hash
+        resultadoBusca = busca(tabelaHash, converter(consultas[i]));
     }
     double tempo_busca = finaliza_tempo();
 
+    excluiTabHash(tabelaHash);
 
     printf("Colisões na inserção: %d\n", colisoes);
     printf("Tempo de inserção   : %fs\n", tempo_insercao);
