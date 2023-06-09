@@ -161,6 +161,7 @@ int main(int argc, char const *argv[])
     double tempo_busca_h_mul = finaliza_tempo();
 
     // limpa a tabela hash com hash por multiplicação
+    free(hash_table);
 
 
 
