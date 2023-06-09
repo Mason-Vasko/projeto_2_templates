@@ -4,6 +4,11 @@
 #include <string.h> // funções strcmp e strcpy
 #include <math.h>
 
+typedef struct hash_node hash_node;
+struct hash_node {
+  char *key;
+};
+
 // Definição das variaveis que controlam a medição de tempo
 clock_t _ini, _fim;
 
@@ -81,12 +86,24 @@ int main(int argc, char const *argv[])
     string* consultas = ler_strings("strings_busca.txt", M);
 
 
+    hash_node *hash_table;
+
     // cria tabela hash com hash por divisão
+    hash_table = malloc(sizeof(hash_node) * B);
+    for (int i = 0; i < B; i++)
+        hash_table[i].key = NULL;
 
     // inserção dos dados na tabela hash usando hash por divisão
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
+        int of = 0;
+        unsigned h = h_div(converter(consultas[i]), of++, B);
+        while (hash_table[h].key != NULL) { // bucket ocupado
+            colisoes_h_div++;
+            h = h_div(converter(insercoes[i]), of++, B);
+        }
+        hash_table[h].key = insercoes[i];
     }
     double tempo_insercao_h_div = finaliza_tempo();
 
@@ -94,20 +111,38 @@ int main(int argc, char const *argv[])
     inicia_tempo();
     for (int i = 0; i < M; i++) {
         // buscar consultas[i] na tabela hash
+        int of = 0;
+        unsigned h = h_div(converter(consultas[i]), of++, B);
+        while (hash_table[h].key != NULL) { // bucket ocupado
+            if (strcmp(hash_table[h].key, consultas[i]) == 0) // chave eh igual a busca
+                encontrados_h_div++;
+            h = h_div(converter(consultas[i]), of++, B);
+        }
     }
     double tempo_busca_h_div = finaliza_tempo();
 
     // limpa a tabela hash com hash por divisão
+    free(hash_table);
 
 
 
 
     // cria tabela hash com hash por divisão
+    hash_table = malloc(sizeof(hash_node) * B);
+    for (int i = 0; i < B; i++)
+        hash_table[i].key = NULL;
 
     // inserção dos dados na tabela hash usando hash por multiplicação
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
+        int of = 0;
+        unsigned h = h_mul(converter(consultas[i]), of++, B);
+        while (hash_table[h].key != NULL) { // bucket ocupado
+            colisoes_h_mul++;
+            h = h_mul(converter(insercoes[i]), of++, B);
+        }
+        hash_table[h].key = insercoes[i];
     }
     double tempo_insercao_h_mul = finaliza_tempo();
 
@@ -115,6 +150,13 @@ int main(int argc, char const *argv[])
     inicia_tempo();
     for (int i = 0; i < M; i++) {
         // buscar consultas[i] na tabela hash
+        int of = 0;
+        unsigned h = h_mul(converter(consultas[i]), of++, B);
+        while (hash_table[h].key != NULL) { // bucket ocupado
+            if (strcmp(hash_table[h].key, consultas[i]) == 0) // chave eh igual a busca
+                encontrados_h_mul++;
+            h = h_mul(converter(consultas[i]), of++, B);
+        }
     }
     double tempo_busca_h_mul = finaliza_tempo();
 
