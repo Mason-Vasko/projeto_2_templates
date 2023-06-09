@@ -186,22 +186,29 @@ int main(int argc, char const *argv[])
 
 
     // cria tabela hash com hash por multiplicação
+    TabelaHashIlim* tabelaHash_mul = criaTabela();
 
     // inserção dos dados na tabela hash com hash por multiplicação
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
+        colisoes_h_mul += insere(tabelaHash_mul, insercoes[i], i, h_mul);
     }
     double tempo_insercao_h_mul = finaliza_tempo();
 
+    resultadoBusca = -1;
     // busca dos dados na tabela hash com hash por multiplicação
     inicia_tempo();
     for (int i = 0; i < M; i++) {
         // buscar consultas[i] na tabela hash
+        resultadoBusca = busca(tabelaHash_mul, converter(consultas[i]), h_mul);
+        if (resultadoBusca != -1)
+            encontrados_h_mul++;
     }
     double tempo_busca_h_mul = finaliza_tempo();
 
     // destroi tabela hash com hash por multiplicação
+    excluiTabela(tabelaHash_mul);
 
 
 
