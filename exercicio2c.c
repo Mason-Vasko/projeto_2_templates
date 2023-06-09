@@ -115,13 +115,29 @@ int busca(TabelaHashIlim* tabelaHash, int chave, unsigned (*funcaoHash)(unsigned
     return -1;
 }
 
-void insere(TabelaHashIlim* tabelaHash, int chave, int valor, unsigned (*funcaoHash)(unsigned, unsigned)){
+int insere(TabelaHashIlim* tabelaHash, int chave, int valor, unsigned (*funcaoHash)(unsigned, unsigned)){
     unsigned idx = funcaoHash(chave, TAM_INICIAL);
     Node* novoElem = (Node*)malloc(sizeof(Node));
     novoElem->chave = chave;
     novoElem->valor = valor;
-    novoElem->prox = tabelaHash->tabela[idx];
-    tabelaHash->tabela[idx] = novoElem;
+    novoElem->prox = NULL;
+
+    int colisoes = 0;
+    // verifica colisoes
+    if (tabelaHash->tabela[idx] == NULL) {
+        tabelaHash->tabela[idx] = novoElem;
+    } else {
+        Node* elemAtual = tabelaHash->tabela[idx];
+        
+        while (elemAtual->prox != NULL) {
+            elemAtual = elemAtual->prox;
+        }
+        
+        elemAtual->prox = novoElem;
+        colisoes++;
+    }
+
+    return colisoes;
 }
 
 
