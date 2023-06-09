@@ -149,21 +149,26 @@ int main(int argc, char const *argv[])
 
 
     // cria tabela hash com hash por hash duplo
+    tabelaHashLim* tabelaHash = criaTabela(B);
 
     // inserção dos dados na tabela hash
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
+        insere(tabelaHash, converter(insercoes[i]), i);
     }
     double tempo_insercao = finaliza_tempo();
 
+    int resultadoBusca;
     // busca dos dados na tabela hash
     inicia_tempo();
     for (int i = 0; i < M; i++) {
         // buscar consultas[i] na tabela hash
+        resultadoBusca = busca(tabelaHash, converter(consultas[i]));
     }
     double tempo_busca = finaliza_tempo();
 
+    excluiTabHash(tabelaHash);
 
     printf("Colisões na inserção: %d\n", colisoes);
     printf("Tempo de inserção   : %fs\n", tempo_insercao);
