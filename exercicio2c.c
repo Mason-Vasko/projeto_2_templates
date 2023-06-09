@@ -159,23 +159,29 @@ int main(int argc, char const *argv[])
     
 
     // cria tabela hash com hash por divisão
-    
+    TabelaHashIlim* tabelaHash_div = criaTabela();
+
     // inserção dos dados na tabela hash com hash por divisão
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
+        colisoes_h_div += insere(tabelaHash_div, insercoes[i], i, h_div);
     }
     double tempo_insercao_h_div = finaliza_tempo();
 
+    int resultadoBusca;
     // busca dos dados na tabela hash com hash por divisão
     inicia_tempo();
     for (int i = 0; i < M; i++) {
         // buscar consultas[i] na tabela hash
+        resultadoBusca = busca(tabelaHash_div, converter(consultas[i]), h_div);
+        if (resultadoBusca != -1)
+            encontrados_h_div++;
     }
     double tempo_busca_h_div = finaliza_tempo();
 
     // destroi tabela hash com hash por divisão
-
+    excluiTabela(tabelaHash_div);
 
 
 
