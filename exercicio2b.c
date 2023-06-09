@@ -123,6 +123,18 @@ int busca(tabelaHashLim* tabelaHash, int chave) {
     return -1;
 }
 
+void excluiTabHash(tabelaHashLim* tabelaHash) {
+    if (tabelaHash == NULL) 
+        return;
+    
+    for (int i = 0; i < tabelaHash->tamanho; i++) 
+        if (tabelaHash->tabela[i] != NULL)
+            free(tabelaHash->tabela[i]);
+    
+    free(tabelaHash->tabela);
+    free(tabelaHash);
+}
+
 int main(int argc, char const *argv[])
 {
     const int N = 50000;
