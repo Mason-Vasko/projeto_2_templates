@@ -18,6 +18,16 @@ typedef char * string;
 
 #define MAX_STRING_LEN 20
 
+// definicoes da hashtable limitada
+typedef struct {
+    int chave;
+    int valor;
+} Par;
+
+typedef struct {
+    int tamanho;
+    Par **tabela;
+} tabelaHashLim;
 
 unsigned converter(string s) {
    unsigned h = 0;
