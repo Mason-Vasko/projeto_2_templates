@@ -97,17 +97,22 @@ tabelaHashLim* criaTabela(int tamanho) {
 
     return tabelaHash;
 }
-void insere(tabelaHashLim* tabelaHash, int chave, int valor) {
+int insere(tabelaHashLim* tabelaHash, int chave, int valor) {
     int i = 0;
     int valorHash = hash(tabelaHash, chave, i);
+    int colisoes = 0;
 
-    while (tabelaHash->tabela[valorHash] != NULL)
+    while (tabelaHash->tabela[valorHash] != NULL) {
         valorHash = rehash(tabelaHash, chave, i++);
+        colisoes++;   
+    }
     
     Par* par = (Par*)malloc(sizeof(Par));
     par->chave = chave;
     par->valor = valor;
     tabelaHash->tabela[valorHash] = par;
+
+    return colisoes;
 }
 
 int busca(tabelaHashLim* tabelaHash, int chave) {
@@ -156,7 +161,7 @@ int main(int argc, char const *argv[])
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
-        insere(tabelaHash, converter(insercoes[i]), i);
+        colisoes += insere(tabelaHash, converter(insercoes[i]), i);
     }
     double tempo_insercao = finaliza_tempo();
 
@@ -166,6 +171,8 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < M; i++) {
         // buscar consultas[i] na tabela hash
         resultadoBusca = busca(tabelaHash, converter(consultas[i]));
+        if (resultadoBusca != -1)
+            encontrados++;
     }
     double tempo_busca = finaliza_tempo();
 
