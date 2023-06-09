@@ -18,17 +18,19 @@ typedef char * string;
 
 #define MAX_STRING_LEN 20
 
+#define TAM_INICIAL 150001;
+
 // definicoes da hashtable ilimitada
 // nó da lista linkada
 typedef struct {
     int chave;
     int valor;
-    struct Node* next;
+    struct Node* prox;
 } Node;
 
 typedef struct {
     Node** tabela;
-} tabelaHashIlim;
+} TabelaHashIlim;
 
 unsigned converter(string s) {
    unsigned h = 0;
@@ -75,6 +77,54 @@ unsigned h_mul(unsigned x, unsigned B)
     const double A = 0.6180;
     return fmod(x * A, 1) * B;
 }
+
+TabelaHashIlim* criaTabela() {
+    TabelaHashIlim* tabelaHash = (TabelaHashIlim*)malloc(sizeof(TabelaHashIlim));
+    tabelaHash->tabela = (Node**)calloc(TAM_INICIAL, sizeof(Node*));
+    return tabelaHash;
+}
+
+void excluiTabela(TabelaHashIlim* tabelaHash) {
+    if (tabelaHash == NULL) return;
+
+    for (int i = 0; i < TAM_INICIAL; i++) {
+        Node* elemAtual = tabelaHash->tabela[i];
+
+        while (elemAtual != NULL) {
+            Node* proxElem = elemAtual->prox;
+            free(elemAtual);
+            elemAtual = proxElem;
+        }
+    }
+
+    free(tabelaHash->tabela);
+    free(tabelaHash);
+}
+
+int busca(TabelaHashIlim* tabelaHash, int chave, unsigned (*funcaoHash)(unsigned, unsigned)) {
+    unsigned idx = funcaoHash(chave, TAM_INICIAL);
+    Node* elemAtual = tabelaHash->tabela[idx];
+
+    while (elemAtual != NULL) {
+        if (elemAtual->chave == chave)
+            return elemAtual->valor;
+        
+        elemAtual = elemAtual->prox;
+    }
+
+    return -1;
+}
+
+void insere(TabelaHashIlim* tabelaHash, int chave, int valor, unsigned (*funcaoHash)(unsigned, unsigned)){
+    unsigned idx = funcaoHash(chave, TAM_INICIAL);
+    Node* novoElem = (Node*)malloc(sizeof(Node));
+    novoElem->chave = chave;
+    novoElem->valor = valor;
+    novoElem->prox = tabelaHash->tabela[idx];
+    tabelaHash->tabela[idx] = novoElem;
+}
+
+
 
 int main(int argc, char const *argv[])
 {
