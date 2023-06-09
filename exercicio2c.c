@@ -18,6 +18,17 @@ typedef char * string;
 
 #define MAX_STRING_LEN 20
 
+// definicoes da hashtable ilimitada
+// nó da lista linkada
+typedef struct {
+    int chave;
+    int valor;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node** tabela;
+} tabelaHashIlim;
 
 unsigned converter(string s) {
    unsigned h = 0;
