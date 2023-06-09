@@ -98,7 +98,7 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
         int of = 0;
-        unsigned h = h_div(converter(consultas[i]), of++, B);
+        unsigned h = h_div(converter(insercoes[i]), of++, B);
         while (hash_table[h].key != NULL) { // bucket ocupado
             colisoes_h_div++;
             h = h_div(converter(insercoes[i]), of++, B);
@@ -137,7 +137,7 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
         int of = 0;
-        unsigned h = h_mul(converter(consultas[i]), of++, B);
+        unsigned h = h_mul(converter(insercoes[i]), of++, B);
         while (hash_table[h].key != NULL) { // bucket ocupado
             colisoes_h_mul++;
             h = h_mul(converter(insercoes[i]), of++, B);
