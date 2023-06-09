@@ -76,6 +76,53 @@ unsigned h_mul(unsigned x, unsigned i, unsigned B)
     return  ((int) ((fmod(x * A, 1) * B) + i)) % B;
 }
 
+// definindo funcao hash e rehash
+unsigned hash(tabelaHashLim* tabelaHash, int chave, unsigned i) {
+    const int B = 150001;
+    int h_mul_val = h_mul(chave, i, B);
+    int h_div_val = h_div(chave, i, B);
+
+    return (h_mul_val + i * h_div_val) % tabelaHash->tamanho;
+}
+
+unsigned rehash(tabelaHashLim* tabelaHash, int chave, unsigned i) {
+    return (hash(tabelaHash, chave, i) + i) % tabelaHash->tamanho;
+}
+
+// funcoes da tabela
+tabelaHashLim* criaTabela(int tamanho) {
+    tabelaHashLim* tabelaHash = (tabelaHashLim*)malloc(sizeof(tabelaHashLim));
+    tabelaHash->tamanho = tamanho;
+    tabelaHash->tabela = (Par**)calloc(tamanho, sizeof(Par*));
+
+    return tabelaHash;
+}
+void insere(tabelaHashLim* tabelaHash, int chave, int valor) {
+    int i = 0;
+    int valorHash = hash(tabelaHash, chave, i);
+
+    while (tabelaHash->tabela[valorHash] != NULL)
+        valorHash = rehash(tabelaHash, chave, i++);
+    
+    Par* par = (Par*)malloc(sizeof(Par));
+    par->chave = chave;
+    par->valor = valor;
+    tabelaHash->tabela[valorHash] = par;
+}
+
+int busca(tabelaHashLim* tabelaHash, int chave) {
+    int i = 0;
+    int valorHash = hash(tabelaHash, chave, i);
+
+    while (tabelaHash->tabela[valorHash] != NULL) {
+        if (tabelaHash->tabela[valorHash]->chave == chave)
+            return tabelaHash->tabela[valorHash]->valor;
+    }
+    valorHash = rehash(tabelaHash, chave, i++);
+
+    return -1;
+}
+
 int main(int argc, char const *argv[])
 {
     const int N = 50000;
