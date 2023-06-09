@@ -117,8 +117,9 @@ int busca(tabelaHashLim* tabelaHash, int chave) {
     while (tabelaHash->tabela[valorHash] != NULL) {
         if (tabelaHash->tabela[valorHash]->chave == chave)
             return tabelaHash->tabela[valorHash]->valor;
+        
+        valorHash = rehash(tabelaHash, chave, i++);
     }
-    valorHash = rehash(tabelaHash, chave, i++);
 
     return -1;
 }
