@@ -21,12 +21,11 @@ typedef char * string;
 // definicoes da hashtable limitada
 typedef struct {
     int chave;
-    int valor;
-} Par;
+} Elem;
 
 typedef struct {
     int tamanho;
-    Par **tabela;
+    Elem **tabela;
 } tabelaHashLim;
 
 unsigned converter(string s) {
@@ -93,11 +92,11 @@ unsigned rehash(tabelaHashLim* tabelaHash, int chave, unsigned i) {
 tabelaHashLim* criaTabela(int tamanho) {
     tabelaHashLim* tabelaHash = (tabelaHashLim*)malloc(sizeof(tabelaHashLim));
     tabelaHash->tamanho = tamanho;
-    tabelaHash->tabela = (Par**)calloc(tamanho, sizeof(Par*));
+    tabelaHash->tabela = (Elem**)calloc(tamanho, sizeof(Elem*));
 
     return tabelaHash;
 }
-int insere(tabelaHashLim* tabelaHash, int chave, int valor) {
+int insere(tabelaHashLim* tabelaHash, int chave) {
     int i = 0;
     int valorHash = hash(tabelaHash, chave, i);
     int colisoes = 0;
@@ -107,10 +106,9 @@ int insere(tabelaHashLim* tabelaHash, int chave, int valor) {
         colisoes++;   
     }
     
-    Par* par = (Par*)malloc(sizeof(Par));
-    par->chave = chave;
-    par->valor = valor;
-    tabelaHash->tabela[valorHash] = par;
+    Elem* elem = (Elem*)malloc(sizeof(Elem));
+    elem->chave = chave;
+    tabelaHash->tabela[valorHash] = elem;
 
     return colisoes;
 }
@@ -121,7 +119,7 @@ int busca(tabelaHashLim* tabelaHash, int chave) {
 
     while (tabelaHash->tabela[valorHash] != NULL) {
         if (tabelaHash->tabela[valorHash]->chave == chave)
-            return tabelaHash->tabela[valorHash]->valor;
+            return tabelaHash->tabela[valorHash]->chave;
         
         valorHash = rehash(tabelaHash, chave, i++);
     }
@@ -161,7 +159,7 @@ int main(int argc, char const *argv[])
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
-        colisoes += insere(tabelaHash, converter(insercoes[i]), i);
+        colisoes += insere(tabelaHash, converter(insercoes[i]));
     }
     double tempo_insercao = finaliza_tempo();
 
