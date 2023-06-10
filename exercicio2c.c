@@ -18,11 +18,11 @@ typedef char * string;
 
 #define MAX_STRING_LEN 20
 
-#define TAM_INICIAL 150001;
+#define TAM_INICIAL 150001
 
 // definicoes da hashtable ilimitada
 // nó da lista linkada
-typedef struct {
+typedef struct Node {
     int chave;
     int valor;
     struct Node* prox;
@@ -165,7 +165,7 @@ int main(int argc, char const *argv[])
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
-        colisoes_h_div += insere(tabelaHash_div, insercoes[i], i, h_div);
+        colisoes_h_div += insere(tabelaHash_div, converter(insercoes[i]), i, h_div);
     }
     double tempo_insercao_h_div = finaliza_tempo();
 
@@ -192,7 +192,7 @@ int main(int argc, char const *argv[])
     inicia_tempo();
     for (int i = 0; i < N; i++) {
         // inserir insercoes[i] na tabela hash
-        colisoes_h_mul += insere(tabelaHash_mul, insercoes[i], i, h_mul);
+        colisoes_h_mul += insere(tabelaHash_mul, converter(insercoes[i]), i, h_mul);
     }
     double tempo_insercao_h_mul = finaliza_tempo();
 
